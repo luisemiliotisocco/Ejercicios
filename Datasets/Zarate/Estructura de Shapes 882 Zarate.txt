@@ -1,0 +1,60 @@
+
+Zárate - Shapes 2010
+********************
+
+
+Ejes_882   	Ejes de calle de todo el partido con actualización 2010 (precenso).
+		Campos:
+
+		ANCHO: Ancho de calle aproximado en metros
+		NOMBRE: Nombre de calle
+		INICIALI: Altura Inicial Izquierda
+		FINALI: Altura Final Izquierda
+		INICIALD: Altura Inicial Derecha
+		FINALD: Altura Final Derecha
+
+
+
+Fracc_882 	Fracciones censales 2010 de todo el partido.
+		Campos:
+
+		Fracción
+		Clavef (Prov+Part+Fracc)
+
+
+
+Rad_882  	Radios censales 2010 de todo el partido.
+		Campos:
+
+		CLAVERA: Clave de Prov+Part+Fracc+Rad
+		COD_PART: Código de partido
+		COD_LOC: Código de localidad
+		FRACCION: Fracción Censal
+		RADIO: Radio Censal
+		TIPO: Tipo de radio = Urbano, Mixto o Rural
+
+
+
+Polyg_882	Polígonos de manzanas 2010 de todo el partido, generadas a partir de los ejes de calle precensales.
+		Campos:
+
+		PROV: Provincia
+		DEPTO: Departamento (partido)
+		CODLOC: Codigo de Localidad
+		FRAC: Fracción Censal
+		RADIO: Radio Censal
+		MZA: Manzana
+
+
+
+Hitos_882	Hitos de referencia
+		Campos:
+
+		NOMBRE: Nombre del hito
+
+
+
+Manz_882	Representación gráfica de contorno de manzanas.
+		No tiene campos con información asociada.
+
+		
