@@ -41,6 +41,8 @@ ggplot() +
 # 4. Cargamos información sociodemográfica.
 info_socioeconomica <- read_xlsx("C:/Users/Santi/Desktop/Santi/Ciencia de Datos/Instrumento de Analisis Urbano II/R/Ejercicios/Datasets/Zarate/info sociodemográfica.xlsx")
 as_tibble(info_socioeconomica)
+info_socioeconomica <- clean_names(info_socioeconomica)
+as_tibble(info_socioeconomica)
 
 datos_demograficos <- st_read("C:/Users/Santi/Desktop/Santi/Ciencia de Datos/Instrumento de Analisis Urbano II/R/Ejercicios/Datasets/PBA/Buenos_Aires_con_datos.shp")
 ggplot()+
@@ -48,12 +50,11 @@ ggplot()+
 as_tibble(datos_demograficos)
 
 # 5. Unimos los datasets sociodemográficos con el de radios censales.
-info_socioeconomica <- mutate(info_socioeconomica, Radio_Censal = paste(0,Radio_Censal, sep = ""))
-datos_demograficos <- left_join(datos_demograficos, info_socioeconomica, by=c("link"= "Radio_Censal"))
+info_socioeconomica <- mutate(info_socioeconomica, radio_censal = paste(0,radio_censal, sep = ""))
+datos_demograficos <- left_join(datos_demograficos, info_socioeconomica, by=c("link"= "radio_censal"))
 datos_demograficos <- st_transform(datos_demograficos, crs = st_crs(radios_censales))
 datos_demograficos <- st_intersection(datos_demograficos, radios_censales)
-datos_demograficos <- filter(datos_demograficos, !(is.na(H_NBI)))
-as_tibble(datos_demograficos)
+datos_demograficos <- drop_na(datos_demograficos)
 datos_demograficos <- datos_demograficos %>%
   group_by(CLAVERA) %>%
   summarise(varon=sum(varon),
@@ -62,13 +63,13 @@ datos_demograficos <- datos_demograficos %>%
             hogares=sum(hogares),
             viviendasp=sum(viviendasp),
             viv_part_h=sum(viv_part_h),
-            H_sin_agua_de_Red=round(mean(H_sin_agua_de_Red),2),
-            H_NBI=round(mean(H_NBI),2),
-            H_con_gas_de_red=round(mean(H_con_gas_de_red),2),
-            V_casillas=round(mean(V_casillas),2),
-            V_calidad_constructiva_insf=round(mean(V_calidad_constructiva_insf),2),
-            V_conexiones_servicios_basicos_insf=round(mean(V_conexiones_servicios_basicos_insf),2),
-            P_Tasa_alfabetizacion=round(mean(P_Tasa_alfabetizacion),2)) %>% 
+            h_sin_agua_de_red=round(mean(h_sin_agua_de_red),2),
+            h_nbi=round(mean(h_nbi),2),
+            h_con_gas_de_red=round(mean(h_con_gas_de_red),2),
+            v_casillas=round(mean(v_casillas),2),
+            v_calidad_constructiva_insf=round(mean(v_calidad_constructiva_insf),2),
+            v_conexiones_servicios_basicos_insf=round(mean(v_conexiones_servicios_basicos_insf),2),
+            p_tasa_alfabetizacion=round(mean(p_tasa_alfabetizacion),2)) %>% 
   st_set_geometry(NULL)
 radios_censales <- left_join(radios_censales, datos_demograficos, by="CLAVERA")
 as_tibble(radios_censales)
@@ -94,57 +95,57 @@ ggplot()+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=H_NBI), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=h_nbi), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,10, 20, 30, 40),
                        limits=c(0,40))+
   labs(title="Hogares con al menos una necesidad básica insatisfecha",
        subtitle = "Zárate",
-       fill="Hogares(%)",
+       fill="Hogares (%)",
        caption="Fuente: INDEC")+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=H_con_gas_de_red), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=h_con_gas_de_red), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,25,50,75,100),
                        limits=c(0,100))+
   labs(title="Hogares con conexión a la red de gas",
        subtitle = "Zárate",
-       fill="Hogares(%)",
+       fill="Hogares (%)",
        caption="Fuente: INDEC")+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=H_sin_agua_de_Red), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=h_sin_agua_de_red), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,25,50,75,100),
     limits=c(0,100))+
   labs(title="Hogares sin agua de red",
        subtitle = "Zárate",
-       fill="Hogares(%)",
+       fill="Hogares (%)",
        caption="Fuente: INDEC")+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=V_conexiones_servicios_basicos_insf), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=v_conexiones_servicios_basicos_insf), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,20,40,60),
                        limits=c(0,60))+
   labs(title="Viviendas con conexión insufieciente a servicios básicos",
        subtitle = "Zárate",
-       fill="Viviendas(%)",
+       fill="Viviendas (%)",
        caption="Fuente: INDEC")+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=V_calidad_constructiva_insf), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=v_calidad_constructiva_insf), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,15,30,45),
                        limits=c(0,45))+
   labs(title="Viviendas con calidad constructiva insufieciente",
        subtitle = "Zárate",
-       fill="Viviendas(%)",
+       fill="Viviendas (%)",
        caption="Fuente: INDEC")+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=V_casillas), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=v_casillas), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0,10,20,30),
                        limits=c(0,30))+
   labs(title="Casillas",
@@ -154,7 +155,7 @@ ggplot()+
   theme_void()
 
 ggplot()+
-  geom_sf(data = radios_censales, aes(fill=P_Tasa_alfabetizacion), alpha=0.7) +
+  geom_sf(data = radios_censales, aes(fill=p_tasa_alfabetizacion), alpha=0.7) +
   scale_fill_viridis_c(direction = -1,
                        breaks=c(0,1,2,3,4),
                        limits=c(0,4))+
@@ -165,14 +166,14 @@ ggplot()+
   theme_void()
 
 IVS <- st_read("C:/Users/Santi/Desktop/Santi/Ciencia de Datos/Instrumento de Analisis Urbano II/R/Ejercicios/Datasets/IVS/IVS.shp")
-IVS <- st_transform(IVS3, crs = st_crs(radios_censales))
-IVS <- st_intersection(IVS3,radios_censales)
+IVS <- st_transform(IVS, crs = st_crs(radios_censales))
+IVS <- st_intersection(IVS,radios_censales)
 
 ggplot()+
   geom_sf(data = IVS, aes(fill=VULNERABIL), alpha=0.7) +
   scale_fill_viridis_c(breaks=c(0.25,0.5,0.75,1),
                        limits=c(0,1))+
-  labs(title="Indíce de Vulnerabilidad Social",
+  labs(title="Índice de Vulnerabilidad Social",
        subtitle = "Zárate",
        fill="IVS",
        caption="Fuente: Fundación Bunge & Born")+
